@@ -6,9 +6,19 @@ export const config = {
 
 const handler = async (req: Request): Promise<Response> => {
   try {
-    const { message } = (await req.json()) as any;
+    const response = await fetch(`${process.env.API_URL}/reset`, {
+      body: JSON.stringify({
+        lead_id: process.env.LEAD_ID,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+    });
 
-    const response = await ChatbotResponse(message);
+    if (response.status !== 200) {
+      throw new Error("OpenAI API returned an error");
+    }
 
     return new Response(JSON.stringify(response), {
       headers: {
